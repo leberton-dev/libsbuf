@@ -3,48 +3,101 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int _resize(t_sbuf *sb, size_t l)
+static size_t _sbuf_initial_cap(const char *str)
 {
-	while (l >= sb->cap / 2)
+	size_t cap;
+	size_t len;
+
+	cap = 64;
+	if (!str)
+		return (cap);
+
+	len = strlen(str);
+	while (len >= cap / 2)
+		cap *= 2;
+	return (cap);
+}
+
+static t_sbuf *_sbuf_alloc(size_t cap)
+{
+	t_sbuf *sb;
+
+	sb = malloc(sizeof(t_sbuf));
+	if (!sb)
+		return (NULL);
+	sb->data = calloc(cap, sizeof(char));
+	if (!sb->data)
+	{
+		free(sb);
+		return (NULL);
+	}
+	sb->cap = cap;
+	sb->len = 0;
+	return (sb);
+}
+
+static int _resize(t_sbuf *sb, size_t extra)
+{
+	while (extra >= sb->cap / 2)
 		sb->cap *= 2;
+
 	if (!sb)
 		sb->data = calloc(sb->cap, sizeof(char));
 	else
 		sb = realloc(sb, sizeof(t_sbuf) * sb->cap);
+
 	if (!sb)
 		return (EXIT_FAILURE);
+
 	return (EXIT_SUCCESS);
 }
 
-static int _sbuf_is_resize_needed(t_sbuf *sb, const char *s)
+static int _sbuf_is_resize_needed(t_sbuf *sb, size_t len)
 {
-	return (sb->len + strlen(s) >= sb->cap);
+	return (sb->len + len >= sb->cap);
+}
+
+static int _sbuf_clear(t_sbuf *sb)
+{
+	sb->data[0] = '\0';
+	sb->len = 0;
+	return (EXIT_SUCCESS);
+}
+
+static int _sbuf_ensure_cap(t_sbuf *sb, size_t extra)
+{
+	int err;
+
+	if (_sbuf_is_resize_needed(sb, extra))
+	{
+		err = _resize(sb, extra);
+		if (err != EXIT_SUCCESS)
+			return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+static int _sbuf_copy_in(t_sbuf *sb, const char *s, size_t len)
+{
+	memcpy(sb->data + sb->len, s, len);
+	sb->len += len;
+	sb->data[sb->len] = '\0';
+	return (EXIT_SUCCESS);
 }
 
 static int _sbuf_append_string(t_sbuf *sb, const char *s)
 {
-	int err;
+	size_t len;
 
 	if (!s)
-	{
-		sb->data[0] = '\0';
-		return (EXIT_SUCCESS);
-	}
+		return (_sbuf_clear(sb));
 
-	if (_sbuf_is_resize_needed(sb, s))
-	{
-		err = _resize(sb, strlen(s));
-		if (err != EXIT_SUCCESS)
-			return (EXIT_FAILURE);
-	}
+	len = strlen(s);
+	if (_sbuf_ensure_cap(sb, len) != EXIT_SUCCESS)
+		return (EXIT_FAILURE);
 
-	while (*s != '\0')
-	{
-		sb->data[sb->len] = *s;
-		sb->len++;
-		s++;
-	}
-	sb->data[sb->len] = '\0';
+	if (_sbuf_copy_in(sb, s, len) != EXIT_SUCCESS)
+		return (EXIT_FAILURE);
 
 	return (EXIT_SUCCESS);
 }
@@ -52,29 +105,10 @@ static int _sbuf_append_string(t_sbuf *sb, const char *s)
 t_sbuf *sbuf_new(char *str)
 {
 	t_sbuf *sb;
-	size_t  len;
 
-	sb = malloc(sizeof(t_sbuf));
+	sb = _sbuf_alloc(_sbuf_initial_cap(str));
 	if (!sb)
 		return (NULL);
-
-	sb->cap = 64;
-	if (str)
-	{
-		len = strlen(str);
-		while (len >= sb->cap / 2)
-			sb->cap *= 2;
-	}
-
-	sb->data = calloc(sb->cap, sizeof(char));
-	if (!sb->data)
-	{
-		free(sb);
-		return (NULL);
-	}
-
-	sb->len = 0;
 	_sbuf_append_string(sb, str);
-
 	return (sb);
 }
