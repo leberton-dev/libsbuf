@@ -3,6 +3,9 @@ SRCS	:= src/sbuf.c
 OBJSDIR := build
 OBJS 	:= $(patsubst src/%.c,$(OBJSDIR)/%.o,$(SRCS))
 HEADERS := include/sbuf/sbuf.h
+TST_SRC := test/test_sbuf.c
+TST_FLG := $(shell pkg-config --cflags --libs criterion)
+TST_BIN := build/test
 
 CC		:= cc
 CFLAGS	:= -Wall -Wextra -Werror
@@ -33,7 +36,7 @@ fclean: clean
 re: fclean all
 
 test: $(NAME)
-	$(CC) $(CFLAGS) $(INCLUDE) main.c $(NAME) -o $(OBJSDIR)/test_main
-	$(OBJSDIR)/test_main
+	$(CC) $(CFLAGS) $(INCLUDE) $(TST_SRC) $(TST_FLG) $(NAME) -o $(TST_BIN)
+	$(TST_BIN)
 
 .PHONY: all clean fclean re test
