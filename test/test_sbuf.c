@@ -52,3 +52,16 @@ Test(sbuf_new, cap_updates_correctly)
 	              "World!Hello Wo");
 	cr_assert_eq(sb->cap, 256);
 }
+
+// === sbuf_append ===
+
+Test(sbuf_append, appends_string)
+{
+	t_sbuf *sb;
+	int     err;
+
+	sb = sbuf_new("Hello");
+	err = sbuf_append(sb, " World!");
+	cr_assert_eq(err, 0);
+	cr_assert_str_eq(sb->data, "Hello World!");
+}
