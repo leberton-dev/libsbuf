@@ -9,17 +9,16 @@ static int sbuf_need_grow(t_sbuf *sb, size_t extra)
 
 static int sbuf_grow(t_sbuf *sb, size_t extra)
 {
+	char *tmp;
+
 	while (extra >= sb->cap / 2)
 		sb->cap *= 2;
 
-	if (!sb)
-		sb->data = calloc(sb->cap, sizeof(char));
-	else
-		sb = realloc(sb, sizeof(t_sbuf) * sb->cap);
-
-	if (!sb)
+	tmp = realloc(sb->data, sb->cap);
+	if (!tmp)
 		return (EXIT_FAILURE);
 
+	sb->data = tmp;
 	return (EXIT_SUCCESS);
 }
 
