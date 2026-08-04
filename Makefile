@@ -1,5 +1,5 @@
 NAME	:= libsbuf.a
-SRCS	:= src/sbuf_new.c src/sbuf_grow.c src/sbuf_append.c
+SRCS	:= src/sbuf_new.c src/sbuf_grow.c src/sbuf_append.c src/sbuf_guys.c
 OBJSDIR := build
 OBJS 	:= $(patsubst src/%.c,$(OBJSDIR)/%.o,$(SRCS))
 HEADERS := include/sbuf/sbuf.h include/sbuf/sbuf_internal.h

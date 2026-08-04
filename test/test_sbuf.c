@@ -13,6 +13,7 @@ Test(sbuf_new, empty_string_as_input)
 	cr_assert_eq(sb->cap, 64);
 	cr_assert_str_eq(sb->data, "");
 	cr_assert_eq(sb->len, 0);
+	sb_free(sb);
 }
 
 Test(sbuf_new, null_as_input)
@@ -24,6 +25,7 @@ Test(sbuf_new, null_as_input)
 	cr_assert_eq(sb->cap, 64);
 	cr_assert_str_eq(sb->data, "");
 	cr_assert_eq(sb->len, 0);
+	sb_free(sb);
 }
 
 Test(sbuf_new, normal_string_as_input)
@@ -35,6 +37,7 @@ Test(sbuf_new, normal_string_as_input)
 	cr_assert_eq(sb->cap, 64);
 	cr_assert_str_eq(sb->data, "Hello World!");
 	cr_assert_eq(sb->len, strlen("Hello World!"));
+	sb_free(sb);
 }
 
 Test(sbuf_new, cap_updates_correctly)
@@ -43,14 +46,18 @@ Test(sbuf_new, cap_updates_correctly)
 
 	sb = sbuf_new("Hello World!Hello World!Hello W");
 	cr_assert_eq(sb->cap, 64);
+	sb_free(sb);
 	sb = sbuf_new("Hello World!Hello World!Hello Wo");
 	cr_assert_eq(sb->cap, 128);
+	sb_free(sb);
 	sb = sbuf_new("Hello World!Hello World!Hello WoHello World!Hello "
 	              "World!Hello W");
 	cr_assert_eq(sb->cap, 128);
+	sb_free(sb);
 	sb = sbuf_new("Hello World!Hello World!Hello WoHello World!Hello "
 	              "World!Hello Wo");
 	cr_assert_eq(sb->cap, 256);
+	sb_free(sb);
 }
 
 // === sbuf_append ===
@@ -64,4 +71,5 @@ Test(sbuf_append, appends_string)
 	err = sbuf_append(sb, " World!");
 	cr_assert_eq(err, 0);
 	cr_assert_str_eq(sb->data, "Hello World!");
+	sb_free(sb);
 }
