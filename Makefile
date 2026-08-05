@@ -1,9 +1,10 @@
 NAME	:= libsbuf.a
-SRCS	:= src/sbuf_new.c src/sbuf_grow.c src/sbuf_append.c src/sbuf_guys.c
+SRCS	:= src/sbuf_new.c src/sbuf_grow.c src/sbuf_append.c src/sbuf_guys.c \
+		   src/sbuf_trim.c
 OBJSDIR := build
 OBJS 	:= $(patsubst src/%.c,$(OBJSDIR)/%.o,$(SRCS))
 HEADERS := include/sbuf/sbuf.h include/sbuf/sbuf_internal.h
-TST_SRC := test/test_sbuf.c
+TST_SRC := test/test_sbuf.c test/test_trim.c test/test_sbuf_new.c
 TST_FLG := $(shell pkg-config --cflags --libs criterion)
 TST_BIN := build/test
 

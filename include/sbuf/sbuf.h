@@ -14,8 +14,11 @@ t_sbuf *sbuf_new(char *str);
 int     sbuf_append(t_sbuf *sb, const char *s);
 int     sbuf_append_len(t_sbuf *sb, const char *s, size_t n);
 int     sbuf_append_char(t_sbuf *sb, char c);
-int     sbuf_append_fmt(t_sbuf *sb, const char *fmt, ...);
+int     sbuf_append_fmt(t_sbuf *sb, const char *fmt, ...); // TO IMPLEMENT
 void    sb_reset(t_sbuf *sb);
 void    sb_free(t_sbuf *sb);
+int     sbuf_trim_left(t_sbuf *sb);
+int     sbuf_trim_right(t_sbuf *sb);
+int     sbuf_trim(t_sbuf *sbuf);
 
 #endif

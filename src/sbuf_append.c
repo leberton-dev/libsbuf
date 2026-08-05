@@ -34,3 +34,31 @@ int sbuf_append(t_sbuf *sb, const char *s)
 
 	return (EXIT_SUCCESS);
 }
+
+int sbuf_append_len(t_sbuf *sb, const char *s, size_t n)
+{
+	if (!s)
+		return (sbuf_clear(sb));
+
+	if (n == 0)
+		return (EXIT_FAILURE);
+
+	if (sbuf_ensure_cap(sb, n) != EXIT_SUCCESS)
+		return (EXIT_FAILURE);
+
+	if (sbuf_copy_in(sb, s, n) != EXIT_SUCCESS)
+		return (EXIT_FAILURE);
+
+	return (EXIT_SUCCESS);
+}
+
+int sbuf_append_char(t_sbuf *sb, char c)
+{
+	if (sbuf_ensure_cap(sb, 1) != EXIT_SUCCESS)
+		return (EXIT_FAILURE);
+
+	sb->data[sb->len] = c;
+	sb->len++;
+
+	return (EXIT_SUCCESS);
+}
